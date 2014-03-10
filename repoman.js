@@ -1,5 +1,7 @@
-var _ = require('underscore'), moment = require('moment'), request = require('request');
-exec = require('child_process').exec, clientId = 'xxx', clientSecret = 'yyy';
+var _ = require('underscore'), moment = require('moment'), request = require('request'), exec = require('child_process').exec;
+
+// put your GitHub Client ID and Client Secret here. Without this information, the app will still run but the rate limit will be quickly exceeded
+var clientId = 'xxx', clientSecret = 'yyy';
 
 exports.getOrgInfo = function(orgName, callback) {
 
@@ -142,12 +144,9 @@ exports.getRepos = function(orgName, callback) {
 };
 
 exports.getCommits = function(orgName, repoName, callback) {
-    // https://api.github.com/repos/netflix/rxjava/commits
-    // https://api.github.com/repos/netflix/rxjava/commits
     var getCommitRequestURL = function(orgName, repoName) {
 	console.log('getting repos commits  ' + 'https://api.github.com/repos/' + orgName + '/' + repoName + '/commits?client_id=' + clientId + '&client_secret=' + clientSecret);
 	return 'https://api.github.com/repos/' + orgName + '/' + repoName + '/commits?client_id=' + clientId + '&client_secret=' + clientSecret;
-	;
     }, results = {}, requestCallback, options = {
 	headers : {
 	    "Accept" : "application/vnd.github.v3+json",
