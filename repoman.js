@@ -117,8 +117,7 @@ exports.getRepos = function(orgName, callback) {
 	    } else if (results.data !== undefined && results.data.length > 0) {
 
 		results.repos = results.repos.concat(mapResults(results.data));
-		// console.log(JSON.stringify(results));
-		console.log("data is " + results.data);
+
 		results.owner = results.data[0].owner;
 	    }
 
@@ -130,7 +129,7 @@ exports.getRepos = function(orgName, callback) {
 	// we've exceeded the maximum number of pages allowed, then we're
 	// done--return the callback
 	if ((results.error !== undefined) || ((results.repos !== undefined && results.data.length < 30) || pageNumber >= MAX_PAGES)) {
-	    console.log('returning ' + JSON.stringify(results));
+
 	    return callback(results);
 
 	    // otherwise, increment the page count and make another request
@@ -169,7 +168,7 @@ exports.getCommits = function(orgName, repoName, callback) {
 	} else {
 	    results.error = error.code || 'error code is undefined';
 	}
-	console.log(JSON.stringify(results));
+
 	return callback(results);
     };
     request.get(options, requestCallback);
