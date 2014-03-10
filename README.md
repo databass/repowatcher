@@ -27,4 +27,19 @@ node server.js 5000
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 
+## Optional GitHub Client ID and Client Secret Configuration
+
+You can optionally add your GitHub Client Id and Client Secret. This will raise the API limits significantly. Since repoman.js is a parent of the public directory, it will not be exposed to the public area. 
+
+To change this, make a quick edit to repoman.js, located in the root folder.
+
+```js
+// put your GitHub Client ID and Client Secret here. 
+// Without this information, the app will still run but the rate limit will be quickly exceeded
+var clientId = 'xxx', clientSecret = 'yyy';
+```
+
+
+
+
 
