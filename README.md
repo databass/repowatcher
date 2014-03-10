@@ -10,7 +10,7 @@ It will also list an organization's public repositories, with quick links to rec
 
 ## Installation Instructions
 
-Assuming that you have [Node.js](http://nodejs.org/) and Git installed on your machine:
+Assuming that you have [Node.js](http://nodejs.org/) (version 0.10 or greater), and Git installed on your machine:
 
 ```sh
 git clone https://github.com/databass/repowatcher.git # or clone your own fork
