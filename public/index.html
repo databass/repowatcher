@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<link href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="css/repowatcher.css">
+
+<meta charset=utf-8 />
+<title>RepoWatcher</title>
+</head>
+<body>
+    <section id="Main">
+
+        <header>
+        
+        <section id="LogoContainer"><img class="logo" style="display:inline" src="img/logo.jpg"></img>RepoWatcher</section>
+
+        <section id="InputContainer">
+            <input placeholder="Enter Repo Owner" id="UsernameInput" type="text"></input>
+            <button class="btn btn-primary btn-lg" style="display: inline-block;  margin-left: 1em" id="GetRepos">Get Repos</button>
+        </section>
+        </header>
+        
+
+        
+        
+        <section id="OwnerSummaryContainer"></section>
+
+        <section id="ChartContainer">
+            <section id="StarsChartContainer">
+                <h1 class="chartHeader">Top Starred Repositories</h1>
+                <section id="StarsChart"></section>
+            </section>
+            <section id="ForksChartContainer">
+                <h1 class="chartHeader">Top Forked Repositories</h1>
+                <section id="ForksChart"></section>
+            </section>
+
+        </section>
+        
+        <section id="GridContainer"></section>
+        
+        <section id="InitialContainer">
+        <p>Enter a GitHub repository owner name and view repository metrics and details.</p>
+        <p>Please note that owner names are currently limited to GitHub Organizations.</p>
+        </section>
+        
+    </section>
+
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="js/repowatcher.js"></script>
+
+
+    <div class="modal" id="myCommitsModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">Recent Commit Details for Repo <span class="bold"></span></h4>
+            </div>
+
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type='button' class='btn btn-success' data-dismiss="modal" >Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="myWaitModal">
+    	<div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">One Moment <img style="margin-left: 1em" src="img/ajax-loader.gif"></img></h4> 
+            </div>
+            <div class="modal-body">
+            </div>
+            
+            <div class="modal-footer">
+                <button type='button' class='btn btn-success' data-dismiss="modal" >Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="myCommitsWaitModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">One Moment <img style="margin-left: 1em" src="img/ajax-loader.gif"></img></h4> 
+            </div>
+            <div class="modal-body">
+            </div>
+            
+            <div class="modal-footer">
+                <button type='button' class='btn btn-success' data-dismiss="modal" >Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="myErrorModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="error modal-title">Error</h4>
+            </div>
+            <div class="modal-body">
+          
+            </div>
+            <div class="modal-footer">
+  
+                <button type='button' class='btn btn-danger' data-dismiss="modal" >Close</button>
+
+            </div>
+          </div>
+        </div>
+    </div>    
+    
+
+    <script id="HeaderTemplate" type="text/template">
+
+        <img class="ownerLogo" src="<%= avatar_url %>" title="<%= login %>"></img>
+
+		<section id="OwnerDetails">
+		<h1><%= login %></h1>
+		<section class="total"><%= public_repos %> Public <% if (public_repos === 1) { %>Repository<% } else { %>Repositories<% } %></section>
+		<section class="date">Created <%= moment(created_at).format("MM/DD/YYYY") %></section>
+		<section class="date">Last updated <%= moment(updated_at).utc().format("MM/DD/YYYY HH:mm") %> (UTC)</section>
+		</section>
+    </script>
+
+        
+
+    <script id="GridTemplate" type="text/template">
+	<h1>Detailed Repository Information</h1>
+	<table id="ReposGrid">
+	<thead>
+		<tr><th>Name</th><th>Language</th><th class="center" style="width: 80px">Stars</th><th class="center" style="width: 80px">Forks</th><th class="center" style="width:80px">Size</th><th class="center">Created</th><th class="center">Updated</th></tr>
+	</thead>
+
+	<tbody>
+	
+    <% _.each(repos, function(repo) { %> 
+		<tr>
+			<td title="Click to see recent commits for <%= repo.Name %>" data-repo="<%= repo.Name %>" class="repo"><%= repo.Name %></td>
+			<td><%= repo.Language %></td>
+			<td style="width: 80px" class="right"><%= repo.Stars %></td>
+			<td style="width: 80px" class="right"><%= repo.Forks %></td>
+			<td style="width: 90px" class="right"><%= repo.Size %></td>
+			<td class="center"><%= repo.Created %></td>
+			<td class="center"><%= repo.Updated %></td>	
+		</tr>
+   	 <% }); %>
+
+	</tbody>
+	</table>
+    </script>
+
+    <script id="CommitsTemplate" type="text/template">
+
+	
+    <table id="CommitsGrid">
+		<thead>
+			<th>Committer</th>
+			<th>Comment</th>
+			<th>Date</th>
+		</thead>
+
+    <tbody>
+    
+    <% _.each(commits, function(commit) { %> 
+        <tr>
+
+            <td class="verticalTop"><%= commit.commit.author.name %></td>
+			<td class="verticalTop"><%= commit.commit.message %></td>
+	   		<td class="commitDate verticalTop"><%= moment(commit.commit.author.date).format("MM/DD/YYYY HH:mm") %></td>
+        </tr>
+     <% }); %>
+
+    </tbody>
+    </table>
+
+
+    </script>
+
+
+    <script id="ErrorTemplate" type="text/template">
+		<p><%= error %></p>
+	</script>
+
+
+
+
+    <script>
+		$(document).ready(function() {
+			RW.init();
+		});
+	</script>
+
+</body>
+</html>

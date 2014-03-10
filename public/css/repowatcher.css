@@ -1,0 +1,341 @@
+/* repowatcher.css */
+
+
+html {
+    height: 100%;
+}
+
+body {
+
+	margin: 0;
+}
+
+#main {
+	
+	height: auto;
+	margin: 1em;
+}
+
+
+
+
+header {
+	height: 80px;
+	display: block;
+	/*background: linear-gradient(#EEEEFF, #CCCCFF);*/
+	background-color: white;
+	width: 100%;
+	margin: 10px 0 10px 0;
+	padding: 0;
+	border-color: midnightblue;
+	border-style: solid;
+	border-width: 0 0 1px 0;
+}
+
+#LogoContainer {
+	margin-left: 0;
+	width: 45%;
+	display: inline-block;
+	font-size: 3em;
+	vertical-align: top;
+	text-align: center;
+	text-shadow: 4px 4px 12px rgba(150, 150, 215, 1);	
+}
+
+#InitialContainer {
+	margin-top: 3em;
+	text-align: center;
+}
+
+
+
+#InitialContainer p {
+	margin-top: 1.5em;
+	font-size: 1.5em;
+}
+
+#InitialContainer .note {
+	font-weight: 700;
+
+}
+
+
+
+@media only screen and (max-width: 900px) {
+	#LogoContainer img.logo {
+		display:none !important; 
+	}
+}
+@media only screen and (min-width: 901px) {
+	#LogoContainer img.logo {
+		display:inline !important; 
+	}
+}
+
+
+
+#InputContainer {
+	width: 45%;
+	text-align: right;
+	padding-top: .95em;
+	vertical-align: top;
+	display: inline-block;
+	margin-right: 0;
+}
+
+
+#UsernameInput {
+	display: inline-block; 
+	margin-top: .1em;	
+	width: 200px;
+	font-size: 1.6em;
+	vertical-align: middle;	
+	height: 2em;	
+}
+
+
+
+#OwnerSummaryContainer {
+
+	margin: .25em 0 .75em 0;
+	padding: 0 0 .75em 0;
+	display: block;
+	text-align: center;
+
+	background-color: #FFF;	
+	color: black;
+	display: none;
+	vertical-align: bottom;
+
+}
+
+
+img.ownerLogo {
+	display: inline-block;
+	vertical-align: top;	
+	margin: 1.1em 0 0 .5em;	
+}
+
+
+#OwnerDetails {
+	display: inline-block;
+	vertical-align: top;
+	margin: 1em 0 0 .5em;	
+
+
+}
+
+#OwnerSummaryContainer h1 {
+	font-size: 1.6em;
+	font-weight: bold;
+	display: block;
+	text-align: left;
+	margin: 0;
+	padding: 0 0 .1em 0;
+}
+
+
+
+#OwnerSummaryContainer .total {
+	display: block;
+	text-align: left;
+	
+}
+
+#OwnerSummaryContainer .date {
+	display: block;
+	text-align: left;
+}
+
+
+
+
+
+
+#ChartContainer {
+	width: 100%;	
+	text-align: center;
+	border-width: 1px 0 0 0;
+	border-style: solid;
+	border-color: midnightblue;
+	display: none;
+}
+
+.chartHeader {
+
+	display: none;
+}
+
+
+#StarsChartContainer, #ForksChartContainer {
+	display: inline-block;
+	vertical-align: middle;
+	min-width: 420px;
+	margin-top: 1.2em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#StarsChart, #ForksChart {
+
+	text-align: center;
+}
+
+
+#GridContainer {
+	border-width: 1px 0 0 0;
+	border-color: midnightblue;
+	border-style: solid;
+
+	width: 100%;
+	padding: .5em;	
+	display: none;
+}
+
+#GridContainer h1 {
+	text-align: center;
+}
+
+#ReposGrid tbody td, #CommitsGrid tbody td {
+	padding: 5px;
+    border: 1px solid #222;
+
+
+}
+
+#ReposGrid {
+	padding: 1em;
+	margin-top: .5em;
+	width: 94%;
+	
+}
+
+#ReposGrid thead th, #CommitsGrid thead th  {
+	padding: 5px;
+    border: 1px solid #999;
+    border-bottom: 1px solid black;
+	color: midnightblue;
+	
+}
+
+
+#ReposGrid td.repo {
+	color: blue;
+	cursor: pointer; 
+}
+
+
+#CommitsGrid {	
+	width: 100%;	
+}
+
+#CommitsGrid  .commitThumbnail {
+	width: 23px;
+	height: 23px;
+}
+
+#CommitsGrid .commitDate {
+	width: 150px;
+
+}
+
+
+
+.dataTables_filter {
+    text-align: right !important;
+	font-size: .9em;
+	margin-bottom: .5em !important;
+
+	padding-right: 3% !important;
+    
+}
+
+
+
+#ReposGrid_info, #CommitsGrid_info {
+	display: none;
+	
+}
+
+
+.error {
+	color: red;	
+}
+
+p.error {
+	font-size: 1.2em;
+	color: black;	
+}
+
+.verticalTop {
+	
+	vertical-align: top;
+}
+
+.bold {
+	
+	font-weight: 700;
+}
+
+.left {
+	text-align: left;
+}
+
+.center {
+	text-align: center;
+}
+.right {
+	text-align: right;
+}
+
+/* dimple.js overrides */
+text.tooltip {
+	fill: black !important;
+	opacity: 1 !important;
+	font-size: 1.2em;
+}
+
+text {
+	
+	font-size: 11px !important;
+}
+
+
+
+/* modals */
+
+
+
+
+
+#myCommitsModal .modal-dialog {
+    top: 3vh;
+	width: 80%; 
+}
+
+#myCommitsModal .modal-body {
+	overflow-y: auto;
+    height: 60vh;
+
+}
+
+
+#myErrorModal .modal-body, #myWaitModal .modal-body {
+	font-size: 1.2em;
+}
+
+
+
+
+/* bootstrap override */
+.modal-dialog {
+    top: 180px;
+}
+
+​
+
+
+
+
+
