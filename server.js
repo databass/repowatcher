@@ -8,7 +8,7 @@ app.get('/org/:orgname', function(req, res) {
     var orgName = req.params.orgname;
     res.setHeader('content-type', 'application/json');
     return repoman.getOrgInfo(orgName, function(orgInfo) {
-	res.send(orgInfo);
+        res.send(orgInfo);
     });
 });
 
@@ -18,20 +18,19 @@ app.get('/repos/:orgname', function(req, res) {
     var orgName = req.params.orgname;
     res.setHeader('content-type', 'application/json');
     return repoman.getRepos(orgName, function(repos) {
-	console.log("repos is " + JSON.stringify(repos));
-	res.send(repos);
-	res.end();
+        console.log("repos is " + JSON.stringify(repos));
+        res.send(repos);
+        res.end();
     });
 });
 
 // get commit info for a github organization.
 app.get('/commits/:orgname/:reponame', function(req, res) {
-    // https://api.github.com/repos/netflix/rxjava/commits
     var orgName = req.params.orgname, repoName = req.params.reponame;
     res.setHeader('content-type', 'application/json');
     return repoman.getCommits(orgName, repoName, function(commits) {
-	console.log(repoName + " commits  " + JSON.stringify(commits));
-	res.send(commits);
+        console.log(repoName + " commits  " + JSON.stringify(commits));
+        res.send(commits);
     });
 });
 
