@@ -1,234 +1,239 @@
 /**
  * repowatcher.js
+ * 
+ * Note that all underscore templates are defined in index.html
  */
 
-// when the document has loaded, add event-handlers
-// note that all underscore templates are defined in index.html
-var RW = (function() {
+
+
+var RW = (function () {
 
     var selectedOrgName = null;
 
     return {
 
-	"drawChart" : function(data, chartType) {
+        "drawChart": function (data, chartType) {
 
-	    var widthFactor = .48, svg, chart, measureAxis, maxRepo, maxLabelLength;
+            var widthFactor = .48,
+                svg, chart, measureAxis, maxRepo, maxLabelLength;
 
-	    $("#ChartContainer").fadeIn();
+            $("#ChartContainer").fadeIn();
 
-	    $(".chartHeader").show();
+            $(".chartHeader").show();
 
-	    if ($("#ChartContainer").width() < (1.8 * ($("#" + chartType + "ChartContainer").css("min-width").replace(/px/g, '')))) {
-		widthFactor = .9;
-	    }
-	    
-	    // dimple doesn't handle long labels well..and we don't want excessive padding, so this hack will add extra margin for 90 degree rotated labels
-	    maxLabelLength = _.max(data, function(repo) {
-		return repo.Name.length;
-	    }).Name.length;
+            if ($("#ChartContainer").width() < (1.8 * ($("#" + chartType + "ChartContainer").css("min-width").replace(/px/g, '')))) {
+                widthFactor = .9;
+            }
 
+            // dimple doesn't handle long labels well..and we don't want
+            // excessive padding, so this hack will add extra margin for 90
+            // degree rotated labels
+            maxLabelLength = _.max(data, function (repo) {
+                return repo.Name.length;
+            }).Name.length;
 
-	    svg = dimple.newSvg("#" + chartType + "Chart", $("#ChartContainer").width() * widthFactor, 360);
-	    chart = new dimple.chart(svg, data);
+            svg = dimple.newSvg("#" + chartType + "Chart", $("#ChartContainer").width() * widthFactor, 360);
+            chart = new dimple.chart(svg, data);
 
-	    chart.addCategoryAxis("x", "Name");
+            chart.addCategoryAxis("x", "Name");
 
-	    measureAxis = chart.addMeasureAxis("y", chartType);
-	    chart.addSeries([ 'Stars', 'Forks' ], dimple.plot.bar);
+            measureAxis = chart.addMeasureAxis("y", chartType);
+            chart.addSeries(['Stars', 'Forks'], dimple.plot.bar);
 
-	    maxRepo = _.max(data, function(repo) {
-		return Math.max(repo.Stars, repo.Forks);
-	    });
+            maxRepo = _.max(data, function (repo) {
+                return Math.max(repo.Stars, repo.Forks);
+            });
 
+            measureAxis.overrideMax = Math.max(maxRepo.Stars, maxRepo.Forks);
+            // measureAxis.titleShape.text("My own title");
 
-	    
-	    measureAxis.overrideMax = Math.max(maxRepo.Stars, maxRepo.Forks);
-	    // measureAxis.titleShape.text("My own title");
+            chart.setMargins(60, 25, 25, 100);
 
-	    chart.setMargins(60, 25, 25, 100);
+            chart.draw();
 
+        },
 
-	    chart.draw();
+        "getCommits": function (orgName, repoName) {
 
-	},
+            $('#myWaitModal').modal({
+                show: true
+            });
 
-	"getCommits" : function(orgName, repoName) {
+            $('#myWaitModal .modal-body').html('Retrieving Recent Repo Commits for <span class="bold">' + repoName + '</span>');
 
-	    $('#myWaitModal').modal({
-		show : true
-	    });
-	    
-	    $('#myWaitModal .modal-body').html('Retrieving Recent Repo Commits for <span class="bold">' + repoName + '</span>');
-	    
-	    $.getJSON("/commits/" + orgName + "/" + repoName, function(data) {
-		$('#myWaitModal').modal('hide');
-	
-		if (data.error !== undefined) {
+            $.getJSON("/commits/" + orgName + "/" + repoName, function (data) {
+                $('#myWaitModal').modal('hide');
 
-		    $('#myErrorModal').modal({
-			show : true
-		    });
+                if (data.error !== undefined) {
 
-		    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
+                    $('#myErrorModal').modal({
+                        show: true
+                    });
 
-		    return false;
-		}
+                    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
 
-		$('#myCommitsModal').modal({
-		    show : true
-		});
+                    return false;
+                }
 
-		// workaround to make modal draggable
-		$("#myCommitsModal").draggable({
-		    handle : ".modal-header"
-		});	
-		$('#myCommitsModal .modal-title').html('Recent Commit Details for Repo <span class="bold">' + repoName + '</span>');
-		$('#myCommitsModal .modal-body').html(_.template($('#CommitsTemplate').html(), data));
+                $('#myCommitsModal').modal({
+                    show: true
+                });
 
-		$('#CommitsGrid').dataTable({
-		    "aaSorting" : [ [ 2, "desc" ] ],
-		    "bPaginate" : false,
-		    "bFilter" : true,
-		    "bAutoWidth" : false,
-		    "oLanguage" : {
-			"sSearch" : "Filter: "
-		    }
-		});
-	
-		return false;
-	    });
-	},
+                // workaround to make modal draggable
+                $("#myCommitsModal").draggable({
+                    handle: ".modal-header"
+                });
+                $('#myCommitsModal .modal-title').html('Recent Commit Details for Repo <span class="bold">' + repoName + '</span>');
+                $('#myCommitsModal .modal-body').html(_.template($('#CommitsTemplate').html(), data));
 
-	"getOrgInfo" : function(orgName) {
+                $('#CommitsGrid').dataTable({
+                    "aaSorting": [
+                        [2, "desc"]
+                    ],
+                    "bPaginate": false,
+                    "bFilter": true,
+                    "bAutoWidth": false,
+                    "oLanguage": {
+                        "sSearch": "Filter: "
+                    }
+                });
 
-	    var that = this;
-	    $.getJSON("/org/" + orgName, function(data) {
-		$('#myWaitModal').modal('hide');
+                return false;
+            });
+        },
 
-		if (data.error !== undefined) {
+        "getOrgInfo": function (orgName) {
 
-		    $('#myErrorModal').modal({
-			show : true
-		    });
+            var that = this;
+            $.getJSON("/org/" + orgName, function (data) {
+                $('#myWaitModal').modal('hide');
 
-		    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
+                if (data.error !== undefined) {
 
-		    return false;
-		}
+                    $('#myErrorModal').modal({
+                        show: true
+                    });
 
-		$("#OwnerSummaryContainer").html(_.template($('#HeaderTemplate').html(), data.orgInfo));
+                    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
 
-		that.getRepos(data.orgInfo.login);
+                    return false;
+                }
 
-	    });
+                $("#OwnerSummaryContainer").html(_.template($('#HeaderTemplate').html(), data.orgInfo));
 
-	},
+                that.getRepos(data.orgInfo.login);
 
-	"getRepos" : function(orgName) {
+            });
 
-	    var that = this;
+        },
 
-	    $("#InitialContainer").hide();
-	    
-	    $('#myWaitModal').modal({
-		show : true
-	    });
+        "getRepos": function (orgName) {
 
-	    $('#myWaitModal .modal-body').html('Retrieving Repo Information for <span class="bold">' + orgName + '</span>');
+            var that = this;
 
-	    $.getJSON("/repos/" + orgName, function(data) {
+            $("#InitialContainer").hide();
 
-		$('#myWaitModal').modal('hide');
+            $('#myWaitModal').modal({
+                show: true
+            });
 
-		if (data.error !== undefined) {
+            $('#myWaitModal .modal-body').html('Retrieving Repo Information for <span class="bold">' + orgName + '</span>');
 
-		    $('#myErrorModal').modal({
-			show : true
-		    });
-		    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
+            $.getJSON("/repos/" + orgName, function (data) {
 
-		    return false;
-		}
+                $('#myWaitModal').modal('hide');
 
-		selectedOrgName = orgName;
+                if (data.error !== undefined) {
 
-		$("#GridContainer").html(_.template($('#GridTemplate').html(), data));
-		$("#GridContainer").fadeIn();
-		$('#ReposGrid').dataTable({
-		    "aaSorting" : [ [ 2, "desc" ] ],
-		    "bPaginate" : false,
-		    "bFilter" : true,
-		    "bAutoWidth" : false,
-		    "oLanguage" : {
-			"sSearch" : "Filter: "
-		    }
-		});
+                    $('#myErrorModal').modal({
+                        show: true
+                    });
+                    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), data));
 
-		// click on a repo name link
-		$("td.repo").on('click', function(event) {
+                    return false;
+                }
 
-		    that.getCommits(selectedOrgName, $(this).data("repo"));
+                selectedOrgName = orgName;
 
-		});
+                $("#GridContainer").html(_.template($('#GridTemplate').html(), data));
+                $("#GridContainer").fadeIn();
+                $('#ReposGrid').dataTable({
+                    "aaSorting": [
+                        [2, "desc"]
+                    ],
+                    "bPaginate": false,
+                    "bFilter": true,
+                    "bAutoWidth": false,
+                    "oLanguage": {
+                        "sSearch": "Filter: "
+                    }
+                });
 
-		that.drawChart(_.sortBy(data.repos, function(repo) {
-		    return -repo.Stars;
-		}).slice(0, 5), "Stars");
+                // click on a repo name link
+                $("td.repo").on('click', function (event) {
 
-		that.drawChart(_.sortBy(data.repos, function(repo) {
-		    return -repo.Forks;
-		}).slice(0, 5), "Forks");
+                    that.getCommits(selectedOrgName, $(this).data("repo"));
 
-	    });
+                });
 
-	},
+                that.drawChart(_.sortBy(data.repos, function (repo) {
+                    return -repo.Stars;
+                }).slice(0, 5), "Stars");
 
-	"init" : function() {
+                that.drawChart(_.sortBy(data.repos, function (repo) {
+                    return -repo.Forks;
+                }).slice(0, 5), "Forks");
 
-	    var that = this, fetchRepoHandler = function() {
+            });
 
-		var name = $('#UsernameInput').val();
+        },
 
-		if (name.replace(/\s/g) === '') {
-		    $('#myErrorModal').modal({
-			show : true
-		    });
-	
-		    $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), {"error" : "Please Enter a Repo"}));
+        "init": function () {
 
+            var that = this,
+                fetchRepoHandler = function () {
 
-		    return false;
-		}
+                    var name = $('#UsernameInput').val();
 
-		$("#ChartContainer").hide();
-		$("#GridContainer").hide();
-		$("#StarsChart").empty();
-		$("#ForksChart").empty();
-		$("#GridContainer").empty();
-		$("#InitialContainer").hide();
-		$(".chartHeader").hide();
-		$("#OwnerSummaryContainer").empty();
-		$("#OwnerSummaryContainer").show();
-		selectedOrgName = null;
-		that.getOrgInfo(name);
+                    if (name.replace(/\s/g) === '') {
+                        $('#myErrorModal').modal({
+                            show: true
+                        });
 
-	    };
+                        $('#myErrorModal .modal-body').html(_.template($('#ErrorTemplate').html(), {
+                            "error": "Please Enter a Repo"
+                        }));
 
+                        return false;
+                    }
 
+                    $("#ChartContainer").hide();
+                    $("#GridContainer").hide();
+                    $("#StarsChart").empty();
+                    $("#ForksChart").empty();
+                    $("#GridContainer").empty();
+                    $("#InitialContainer").hide();
+                    $(".chartHeader").hide();
+                    $("#OwnerSummaryContainer").empty();
+                    $("#OwnerSummaryContainer").show();
+                    selectedOrgName = null;
+                    that.getOrgInfo(name);
 
-	    // events
+                };
 
-	    $("#GetRepos").on('click', fetchRepoHandler);
+            // events
 
-	    $('#UsernameInput').on('keypress', function(event) {
+            $("#GetRepos").on('click', fetchRepoHandler);
 
-		var keycode = (event.keyCode ? event.keyCode : event.which);
-		if (keycode === 13) {
-		    fetchRepoHandler();
-		}
-	    });
+            $('#UsernameInput').on('keypress', function (event) {
 
-	}
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode === 13) {
+                    fetchRepoHandler();
+                }
+            });
+
+        }
     };
 
 })();
