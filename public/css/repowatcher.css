@@ -237,8 +237,12 @@ img.ownerLogo {
 
 #CommitsGrid .commitDate {
 	width: 150px;
-
 }
+
+#CommitsGrid .commitPerson {
+	width: 160px;
+}
+
 
 
 
