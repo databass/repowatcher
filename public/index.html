@@ -191,9 +191,9 @@
     <% _.each(commits, function(commit) { %> 
         <tr>
 
-            <td class="verticalTop"><%= commit.commit.author.name %></td>
-			<td class="verticalTop"><%= commit.commit.message %></td>
-	   		<td class="commitDate verticalTop"><%= moment(commit.commit.author.date).format("MM/DD/YYYY HH:mm") %></td>
+            <td class="commitPerson verticalTop"><%= commit.commit.author.name %></td>
+            <td class="verticalTop"><%= commit.commit.message %></td>
+            <td class="commitDate verticalTop"><%= moment(commit.commit.author.date).format("MM/DD/YYYY HH:mm") %></td>
         </tr>
      <% }); %>
 
